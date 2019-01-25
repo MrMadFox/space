@@ -19,16 +19,16 @@ class bullets:
         self.y=y
     def display(self):
         rectangle((0,0,0),(self.x-20,self.y,20,10))
-def checkcrash(pos):
+def checkcrash(pos,id):
     for i in range(len(listlevel1)):
-        if listlevel1[i].x <= pos[0] <= listlevel1[i].x + listlevel1[i].width and listlevel1[i].y <= pos[1] <= listlevel1[i].y + listlevel1[i].width:
+        if listlevel1[i].x <= pos[0] <= listlevel1[i].x + listlevel1[i].width and listlevel1[i].y <= pos[1] <= listlevel1[i].y + listlevel1[i].width and id!=-1:
             listlevel1[i].health -= 1
             if listlevel1[i].health <= 0:
                 global score
                 score+=1
                 listlevel1.pop(i)
             return(1)
-    if player.x <= pos[0] <= player.x + player.width and player.y <= pos[1] <= player.y + player.width:
+    if player.x <= pos[0] <= player.x + player.width and player.y <= pos[1] <= player.y + player.width and id!=1:
         player.health -= 1
         if player.health <= 0:
             print(score)
@@ -76,8 +76,9 @@ while(1):
             quit()
     mouse_x,mouse_y=pygame.mouse.get_pos()
     mouse_y-=player.width//2
-    playervelocity_x,playervelocity_y=0,(mouse_y-player.y)/10
+    playervelocity_x,playervelocity_y=(mouse_x-player.x)/10,(mouse_y-player.y)/10
     player.y+=playervelocity_y
+    player.x+=playervelocity_x
     #listofbullets.append(bullets(1, player.x+player.width, player.y))
     listofbullets.append(bullets(1, player.x+player.width, player.y+player.width//2-5))
     #listofbullets.append(bullets(1, player.x+player.width, player.y+player.width-10))
@@ -93,13 +94,8 @@ while(1):
         if not 0<=listofbullets[j].x<=sizex:
             listofbullets.pop(j)
             continue
-        if checkcrash((listofbullets[j].x,listofbullets[j].y)):
+        if checkcrash((listofbullets[j].x,listofbullets[j].y),listofbullets[j].id):
             listofbullets.pop(j)
         j+=1
-
-
-
     update()
     clock.tick(30)
-
-
