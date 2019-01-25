@@ -10,6 +10,11 @@ clock=pygame.time.Clock()
 score=0
 playerimage = pygame.image.load('hero.png')
 playerimage=pygame.transform.scale(playerimage, (sizey//10, sizey//10))
+back = pygame.image.load("background.png")
+back = pygame.transform.scale(back, (sizex, sizey))
+back.convert_alpha()
+transColor = back.get_at((1,1))
+back.set_colorkey(transColor)
 def rectangle(colour,pos):
     pygame.draw.rect(surface,colour,pos)
 class bullets:
@@ -42,6 +47,7 @@ class level1:
         self.health=10
         self.id=-1
         self.velocity_y=10
+        self.velocity_x=-1
         self.width=sizey//20
         self.x=sizex-self.width
         self.y=random.randint(self.width,sizey-self.width)
@@ -50,7 +56,7 @@ class level1:
         surface.blit(playerimage,(self.x,self.y))
 
 def update():
-    surface.fill((255,255,255))
+    surface.blit(back, (0, 0))#surface.fill((255,255,255))
     for i in listofbullets:
         i.display()
     for i in listlevel1:
@@ -82,12 +88,19 @@ while(1):
     #listofbullets.append(bullets(1, player.x+player.width, player.y))
     listofbullets.append(bullets(1, player.x+player.width, player.y+player.width//2-5))
     #listofbullets.append(bullets(1, player.x+player.width, player.y+player.width-10))
-    for i in range(len(listlevel1)):
+    i=0
+    while (i<len(listlevel1)):
+        listlevel1[i].x += listlevel1[i].velocity_x
+        if listlevel1[i].x<0:
+            listlevel1.pop(i)
+            continue
         if listlevel1[i].y<=0 or listlevel1[i].y>=sizey-listlevel1[i].width:
             listlevel1[i].velocity_y=-listlevel1[i].velocity_y
         listlevel1[i].y+=listlevel1[i].velocity_y
+        listlevel1[i].x+=listlevel1[i].velocity_x
         if random.randint(0,3)==0:#bullets by bots keep it 0-10
             listofbullets.append(bullets(-1,listlevel1[i].x,listlevel1[i].y))
+        i+=1
     j=0
     while(len(listofbullets)>j):
         listofbullets[j].x+=listofbullets[j].id*10
