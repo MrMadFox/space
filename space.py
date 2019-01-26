@@ -8,21 +8,26 @@ surface=pygame.display.set_mode((sizex,sizey))
 surface.fill((255,255,255));
 clock=pygame.time.Clock()
 score=0
+health_x=100
+health_y=20
 playerimage = pygame.image.load('hero.png')
 playerimage=pygame.transform.scale(playerimage, (sizey//10, sizey//10))
 back = pygame.image.load("background.png")
 back = pygame.transform.scale(back, (sizex, sizey))
 playerimage.convert_alpha()
 playerimage.set_colorkey((255,255,255))
-def rectangle(colour,pos):
-    pygame.draw.rect(surface,colour,pos)
+bulletimage=pygame.image.load("bullet1.png")
+bulletimage=pygame.transform.scale(bulletimage,(20,10))
+bulletimage.convert_alpha()
+bulletimage.set_colorkey((17,17,17))
 class bullets:
     def __init__(self,id,x,y):
         self.id=id
         self.x=x
         self.y=y
     def display(self):
-        rectangle((0,0,0),(self.x-20,self.y,20,10))
+        surface.blit(bulletimage,(self.x-20,self.y))
+        #rectangle((0,0,0),(self.x-20,self.y,20,10))
 def checkcrash(pos,id):
     for i in range(len(listlevel1)):
         if listlevel1[i].x <= pos[0] <= listlevel1[i].x + listlevel1[i].width and listlevel1[i].y <= pos[1] <= listlevel1[i].y + listlevel1[i].width and id!=-1:
@@ -53,9 +58,12 @@ class level1:
         self.colour=(255,0,0)
     def display(self):
         surface.blit(playerimage,(self.x,self.y))
-
+def healthbar():
+    pygame.draw.rect(surface,(0,0,0),(5,5,health_x,health_y),4)
+    pygame.draw.rect(surface,(0,0,255),(5,5,player.health*10,health_y))
 def update():
     surface.blit(back, (0, 0))#surface.fill((255,255,255))
+    healthbar()
     for i in listofbullets:
         i.display()
     for i in listlevel1:
@@ -72,7 +80,7 @@ listlevel1=[]
 for j in range(3):
     listlevel1.append(level1())
 listofbullets=[]
-
+firebullet=0
 while(1):
     for i in pygame.event.get():
         if i.type==pygame.QUIT:
@@ -85,7 +93,8 @@ while(1):
     player.y+=playervelocity_y
     player.x+=playervelocity_x
     #listofbullets.append(bullets(1, player.x+player.width, player.y))
-    listofbullets.append(bullets(1, player.x+player.width, player.y+player.width//2-5))
+    if firebullet%3==0:
+        listofbullets.append(bullets(1, player.x+player.width, player.y+player.width//2-5))
     #listofbullets.append(bullets(1, player.x+player.width, player.y+player.width-10))
     i=0
     while (i<len(listlevel1)):
@@ -109,5 +118,7 @@ while(1):
         if checkcrash((listofbullets[j].x,listofbullets[j].y),listofbullets[j].id):
             listofbullets.pop(j)
         j+=1
+    firebullet+=1
+    firebullet%=3
     update()
     clock.tick(30)
