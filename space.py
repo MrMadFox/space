@@ -12,9 +12,8 @@ playerimage = pygame.image.load('hero.png')
 playerimage=pygame.transform.scale(playerimage, (sizey//10, sizey//10))
 back = pygame.image.load("background.png")
 back = pygame.transform.scale(back, (sizex, sizey))
-back.convert_alpha()
-transColor = back.get_at((1,1))
-back.set_colorkey(transColor)
+playerimage.convert_alpha()
+playerimage.set_colorkey((255,255,255))
 def rectangle(colour,pos):
     pygame.draw.rect(surface,colour,pos)
 class bullets:
